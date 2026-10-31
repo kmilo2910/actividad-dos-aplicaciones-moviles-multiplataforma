@@ -14,9 +14,7 @@
       "bundleIdentifier": "com.nexuscampus.digital"
     },
     "plugins": [
-      "expo-asset",
       "expo-status-bar",
-      "expo-sharing",
       "expo-router",
       "expo-font",
       "expo-web-browser"
