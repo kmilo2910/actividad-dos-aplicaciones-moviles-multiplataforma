@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Nexus Campus Digital",
+    "slug": "nexus-campus-digital",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "nexus",
+    "android": {
+      "package": "com.nexuscampus.digital"
+    },
+    "ios": {
+      "bundleIdentifier": "com.nexuscampus.digital"
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-status-bar",
+      "expo-sharing"
+    ]
+  }
+}
