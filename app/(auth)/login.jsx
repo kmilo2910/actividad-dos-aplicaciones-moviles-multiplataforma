@@ -47,7 +47,13 @@ export default function LoginScreen() {
         )}
       </HapticPressable>
 
-      {error ? <Text className="mt-4 text-center font-inter-regular text-red-700">{error}</Text> : null}
+      {error ? (
+        <View className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
+          <Text className="text-center font-inter-semibold text-sm leading-5 text-red-800">
+            {error}
+          </Text>
+        </View>
+      ) : null}
 
       <Link href="/(tabs)" replace className="mt-8">
         <Text className="text-center font-inter-semibold text-nexus-blue">Volver al inicio</Text>

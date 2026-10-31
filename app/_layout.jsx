@@ -2,11 +2,16 @@ import { Stack } from 'expo-router';
 import { useRouter, useSegments } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
+import { LogBox } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuth } from '../src/context/AuthContext';
 import { APP_FONTS } from '../src/theme/fonts';
 import LoadingScreen from '../src/components/LoadingScreen';
 import '../global.css';
+
+if (__DEV__) {
+  LogBox.ignoreAllLogs(true);
+}
 
 function AppNavigator() {
   const { isAuthenticated, isLoading } = useAuth();
