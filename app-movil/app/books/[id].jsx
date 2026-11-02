@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ErrorScreen from '../../src/components/ErrorScreen';
 import LoadingScreen from '../../src/components/LoadingScreen';
 import HapticPressable from '../../src/components/ui/HapticPressable';
-import { getBook, getPurchases, purchaseBook } from '../../src/services/books';
+import { downloadBook, getBook, getBookCoverUrl, getPurchases, purchaseBook } from '../../src/services/books';
 
 function formatCop(value) {
   return new Intl.NumberFormat('es-CO', {
@@ -22,6 +22,7 @@ export default function BookDetailScreen() {
   const [book, setBook] = useState(null);
   const [error, setError] = useState(null);
   const [purchaseState, setPurchaseState] = useState('idle');
+  const [downloadState, setDownloadState] = useState('idle');
   const [feedback, setFeedback] = useState(null);
 
   const loadBook = async () => {
@@ -86,8 +87,40 @@ export default function BookDetailScreen() {
     }
   }
 
+  async function handleDownload() {
+    if (purchaseState !== 'done' || downloadState === 'loading') return;
+
+    setDownloadState('loading');
+    try {
+      const result = await downloadBook(id);
+      const Sharing = await import('expo-sharing');
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(result.uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Guardar publicación de Nexus Library',
+          UTI: 'com.adobe.pdf',
+        });
+      }
+      setFeedback({
+        type: 'success',
+        title: 'Descarga lista',
+        message: 'La publicación está preparada para guardarla o compartirla.',
+      });
+    } catch (downloadError) {
+      setFeedback({
+        type: 'error',
+        title: 'No se pudo descargar',
+        message: downloadError.message || 'Inténtalo nuevamente en unos segundos.',
+      });
+    } finally {
+      setDownloadState('idle');
+    }
+  }
+
   if (error) return <ErrorScreen onRetry={loadBook} />;
   if (!book) return <LoadingScreen subtitle="Preparando tu libro" />;
+
+  const coverUrl = getBookCoverUrl(book);
 
   return (
     <SafeAreaView className="flex-1 bg-nexus-cream" edges={['top', 'left', 'right']}>
@@ -127,12 +160,12 @@ export default function BookDetailScreen() {
 
       <View>
         <View className="relative mt-7 h-96 overflow-hidden rounded-3xl bg-[#F5F2EC] p-4">
-        {book.coverUrl ? (
+        {coverUrl ? (
           <Image
             className="absolute inset-0 h-full w-full"
             blurRadius={18}
             resizeMode="cover"
-            source={{ uri: book.coverUrl }}
+            source={{ uri: coverUrl }}
             style={{ opacity: 0.58, transform: [{ scale: 1.2 }] }}
           />
         ) : null}
@@ -148,7 +181,7 @@ export default function BookDetailScreen() {
             <Image
               className="absolute inset-0 h-full w-full"
               resizeMode="contain"
-              source={book.coverUrl ? { uri: book.coverUrl } : undefined}
+              source={coverUrl ? { uri: coverUrl } : undefined}
             />
           </View>
         </View>
@@ -175,10 +208,27 @@ export default function BookDetailScreen() {
           <ActivityIndicator color="#FFFFFF" />
         ) : (
           <Text className="text-center font-inter-semibold text-white">
-            {purchaseState === 'done' ? 'Adquirida' : 'Adquirir publicación'}
+            {purchaseState === 'done' ? 'Adquirido' : 'Adquirir publicación'}
           </Text>
         )}
       </HapticPressable>
+      {purchaseState === 'done' ? (
+        <HapticPressable
+          className="mt-4 min-h-[56px] flex-row items-center justify-center rounded-full border border-nexus-blue bg-white px-5 py-4 disabled:opacity-60"
+          disabled={downloadState === 'loading'}
+          hapticStyle="light"
+          onPress={handleDownload}
+        >
+          {downloadState === 'loading' ? (
+            <ActivityIndicator color="#245B73" />
+          ) : (
+            <>
+              <Ionicons name="download-outline" size={19} color="#245B73" />
+              <Text className="ml-2 text-center font-inter-semibold text-nexus-blue">Descargar PDF</Text>
+            </>
+          )}
+        </HapticPressable>
+      ) : null}
       </View>
 
         </View>

@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import HapticPressable from '../../src/components/ui/HapticPressable';
 import { useAuth } from '../../src/context/AuthContext';
-import { downloadBook, getBook, getPurchases } from '../../src/services/books';
+import { downloadBook, getBook, getBookCoverUrl, getPurchases } from '../../src/services/books';
 
 function getTimeGreeting() {
   const hour = new Date().getHours();
@@ -142,8 +142,8 @@ export default function HomeScreen() {
           <View className="mt-6 gap-4">
             {acquiredBooks.map(({ book, bookId }) => (
               <View key={bookId} className="flex-row items-center rounded-2xl bg-[#F5F1E9] p-3">
-                {book?.coverUrl ? (
-                  <Image className="h-20 w-14 rounded-lg" resizeMode="cover" source={{ uri: book.coverUrl }} />
+                {getBookCoverUrl(book) ? (
+                  <Image className="h-20 w-14 rounded-lg" resizeMode="cover" source={{ uri: getBookCoverUrl(book) }} />
                 ) : (
                   <View className="h-20 w-14 items-center justify-center rounded-lg bg-[#DDE6E8]">
                     <Text className="font-space-semibold text-lg text-nexus-blue">N</Text>

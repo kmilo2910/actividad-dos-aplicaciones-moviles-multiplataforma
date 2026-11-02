@@ -24,6 +24,12 @@ export function getBooks() {
   return api.get('/api/books');
 }
 
+export function getBookCoverUrl(book) {
+  if (!book?.coverUrl) return null;
+  if (/^https?:\/\//i.test(book.coverUrl)) return book.coverUrl;
+  return `${APP_CONFIG.apiBaseUrl}${book.coverUrl.startsWith('/') ? '' : '/'}${book.coverUrl}`;
+}
+
 export function getBook(id) {
   return api.get(`/api/books/${encodeURIComponent(id)}`);
 }
