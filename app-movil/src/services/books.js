@@ -7,3 +7,11 @@ export function getBooks() {
 export function getBook(id) {
   return api.get(`/api/books/${encodeURIComponent(id)}`);
 }
+
+export function purchaseBook(bookId) {
+  return api.post('/api/purchases', { bookId });
+}
+
+export function getPurchases() {
+  return api.get('/api/purchases');
+}
