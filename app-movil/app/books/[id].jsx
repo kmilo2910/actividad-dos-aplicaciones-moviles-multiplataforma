@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Modal, ScrollView, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ErrorScreen from '../../src/components/ErrorScreen';
@@ -68,6 +69,7 @@ export default function BookDetailScreen() {
 
     try {
       await purchaseBook(id);
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setPurchaseState('done');
       setFeedback({
         type: 'success',

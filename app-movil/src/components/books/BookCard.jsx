@@ -22,7 +22,7 @@ export default function BookCard({ book, columns = 1, isPurchased = false, isDow
     <View
       className={`mb-4 overflow-hidden rounded-3xl border border-[#E7E2D9] bg-[#FCFBF8] p-4 ${compact ? 'mx-1' : ''}`}
       style={[
-        compact ? { flex: 1 } : undefined,
+        compact ? { flex: 1, minHeight: 440 } : undefined,
         {
           shadowColor: '#17202A',
           shadowOffset: { width: 0, height: 5 },
@@ -32,8 +32,8 @@ export default function BookCard({ book, columns = 1, isPurchased = false, isDow
         },
       ]}
     >
-      <Link href={`/books/${book.id}`} asChild>
-        <Pressable>
+      <Link href={`/books/${book.id}`} asChild style={compact ? { flex: 1 } : undefined}>
+        <Pressable style={compact ? { flex: 1 } : undefined}>
           {coverUrl && !coverFailed ? (
             <Image
               className="w-full rounded-2xl bg-slate-100"

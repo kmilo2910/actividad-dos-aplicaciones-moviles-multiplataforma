@@ -1,6 +1,7 @@
 import { Link, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Modal, ScrollView, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import HapticPressable from '../../src/components/ui/HapticPressable';
 import { APP_CONFIG } from '../../src/config/environment';
@@ -76,6 +77,7 @@ export default function CoworkingScreen() {
         reservationTime: time,
         durationMinutes: duration,
       });
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setSelectedSpace(null);
       setFeedback({
         type: 'success',
