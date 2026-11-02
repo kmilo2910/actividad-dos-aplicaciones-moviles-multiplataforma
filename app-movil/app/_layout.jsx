@@ -40,6 +40,7 @@ function AppNavigator() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" />
+        <Stack.Screen name="books/acquired" options={{ presentation: 'card' }} />
         <Stack.Screen name="books/[id]" options={{ presentation: 'card' }} />
       </Stack>
     </>

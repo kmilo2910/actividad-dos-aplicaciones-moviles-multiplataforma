@@ -1,6 +1,8 @@
 import { Link, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import HapticPressable from '../../src/components/ui/HapticPressable';
 import { useAuth } from '../../src/context/AuthContext';
 import { downloadBook, getBook, getBookCoverUrl, getPurchases } from '../../src/services/books';
@@ -13,6 +15,7 @@ function getTimeGreeting() {
 }
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const { isAuthenticated, user } = useAuth();
   const [acquiredBooks, setAcquiredBooks] = useState([]);
   const [loadingBooks, setLoadingBooks] = useState(false);
@@ -72,19 +75,28 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-nexus-cream" contentContainerClassName="p-6 pb-10">
-      <Text className="mt-8 font-inter-semibold text-sm text-nexus-green">
-        {isAuthenticated ? `${greeting}, ${firstName || 'de nuevo'}` : `${greeting}, bienvenido`}
-      </Text>
-      <Text className="mt-8 font-space-semibold text-xs uppercase tracking-[3px] text-nexus-green">
-        Nexus University
-      </Text>
-      <Text className="mt-5 font-space-semibold text-4xl leading-tight text-nexus-ink">
-        Tu campus para aprender, crear y compartir.
-      </Text>
-      <Text className="mt-7 font-inter-regular text-base leading-6 text-slate-600">
-        Explora el catálogo universitario y encuentra el siguiente recurso para tu jornada.
-      </Text>
+    <View className="flex-1 bg-nexus-cream">
+      <View className="bg-nexus-cream px-6 pb-4" style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <Text className="font-inter-semibold text-sm text-nexus-green">
+          {isAuthenticated ? `${greeting}, ${firstName || 'de nuevo'}` : `${greeting}, bienvenido`}
+        </Text>
+        <Text className="mt-8 font-space-semibold text-xs uppercase tracking-[3px] text-nexus-green">
+          Nexus University
+        </Text>
+        <Text className="mt-5 font-space-semibold text-4xl leading-tight text-nexus-ink">
+          Tu campus para aprender, crear y compartir.
+        </Text>
+        <Text className="mt-7 font-inter-regular text-base leading-6 text-slate-600">
+          Explora el catálogo universitario y encuentra el siguiente recurso para tu jornada.
+        </Text>
+        <LinearGradient
+          colors={['rgba(244, 241, 235, 0.96)', 'rgba(244, 241, 235, 0)']}
+          pointerEvents="none"
+          style={styles.headerFade}
+        />
+      </View>
+
+      <ScrollView className="flex-1" contentContainerClassName="px-6 pb-10 pt-5">
 
       <View
         className="mt-10 rounded-3xl border border-white/20 bg-nexus-blue p-7"
@@ -176,6 +188,23 @@ export default function HomeScreen() {
           </HapticPressable>
         </Link>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = {
+  header: {
+    elevation: 8,
+    overflow: 'visible',
+    position: 'relative',
+    zIndex: 10,
+  },
+  headerFade: {
+    bottom: -24,
+    height: 24,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+};

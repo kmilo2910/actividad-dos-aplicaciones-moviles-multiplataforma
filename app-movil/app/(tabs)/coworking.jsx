@@ -1,6 +1,8 @@
 import { Link, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Image, Modal, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import HapticPressable from '../../src/components/ui/HapticPressable';
@@ -37,6 +39,7 @@ function resolveSpaceImage(imageUrl) {
 }
 
 export default function CoworkingScreen() {
+  const insets = useSafeAreaInsets();
   const { isAuthenticated } = useAuth();
   const { spaces, reservations, isLoading, error, reload, reserve, cancel } = useCoworking(isAuthenticated);
   const [selectedSpace, setSelectedSpace] = useState(null);
@@ -131,10 +134,25 @@ export default function CoworkingScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-nexus-cream" contentContainerClassName="p-6 pb-10">
-      <Text className="mt-10 font-space-semibold text-xs uppercase tracking-[3px] text-nexus-green">Nexus Coworking</Text>
-      <Text className="mt-4 font-space-semibold text-4xl leading-tight text-nexus-ink">Tu espacio para crear.</Text>
-      <Text className="mt-5 font-inter-regular text-base leading-6 text-slate-600">Encuentra un lugar para estudiar, colaborar y hacer realidad tus próximos proyectos.</Text>
+    <View className="flex-1 bg-nexus-cream">
+      <View
+        className="bg-nexus-cream px-6 pb-4"
+        style={[styles.header, { paddingTop: insets.top + 16 }]}
+      >
+        <Text className="font-space-semibold text-xs uppercase tracking-[3px] text-nexus-green">Nexus Coworking</Text>
+        <Text className="mt-4 font-space-semibold text-4xl leading-tight text-nexus-ink">Tu espacio para crear.</Text>
+        <Text className="mt-5 font-inter-regular text-base leading-6 text-slate-600">Encuentra un lugar para estudiar, colaborar y hacer realidad tus próximos proyectos.</Text>
+        <LinearGradient
+          colors={['rgba(244, 241, 235, 0.96)', 'rgba(244, 241, 235, 0)']}
+          pointerEvents="none"
+          style={styles.headerFade}
+        />
+      </View>
+
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="px-6 pb-10 pt-5"
+      >
 
       <View className="mt-8 rounded-3xl bg-white p-6">
         <Text className="font-space-semibold text-2xl text-nexus-ink">Espacios disponibles</Text>
@@ -177,10 +195,10 @@ export default function CoworkingScreen() {
                 className="absolute inset-0 h-full w-full"
                 resizeMode="cover"
                 source={{ uri: imageSource }}
-                style={{ opacity: 0.13 }}
+                style={{ opacity: 0.22 }}
               />
             ) : null}
-            <View className="absolute inset-0 bg-[#FCFBF8]/80" />
+            <View className="absolute inset-0 bg-[#FCFBF8]/78" />
             <View className="relative px-6 pt-5">
               <View className="flex-row items-center">
                 <View className={`h-1.5 w-14 rounded-full ${colors[index % colors.length]}`} />
@@ -197,7 +215,7 @@ export default function CoworkingScreen() {
               ) : null}
               <Text className="mt-4 font-inter-regular leading-6 text-slate-600">{space.shortDescription || space.longDescription}</Text>
               <HapticPressable
-                className="mt-5 rounded-full border border-nexus-blue bg-white/80 px-5 py-3"
+                className="mt-5 rounded-full border border-nexus-blue bg-white px-5 py-3"
                 onPress={() => setSelectedDetail(space)}
                 hapticStyle="light"
               >
@@ -351,7 +369,7 @@ export default function CoworkingScreen() {
               <Text className="mt-5 font-inter-regular text-base leading-6 text-slate-600">
                 {selectedDetail?.longDescription || selectedDetail?.shortDescription || 'Espacio disponible para estudiar, colaborar y desarrollar tus proyectos.'}
               </Text>
-              <View className="mt-5 rounded-2xl bg-white/70 px-4 py-3">
+              <View className="mt-5 rounded-2xl bg-white px-4 py-3">
                 <Text className="font-inter-semibold text-sm text-nexus-ink">Estado</Text>
                 <Text className={`mt-1 font-inter-regular ${selectedDetail?.status === 'available' ? 'text-nexus-green' : 'text-slate-500'}`}>
                   {selectedDetail?.status === 'available' ? 'Disponible para reservar' : 'No disponible en este momento'}
@@ -406,7 +424,7 @@ export default function CoworkingScreen() {
           <Text className="mt-5 font-inter-semibold text-white">Fecha</Text>
           <View className="mt-2 flex-row flex-wrap gap-2">
             {weekdays().slice(0, 7).map((option) => (
-              <HapticPressable key={dateValue(option)} className={`rounded-full px-3 py-2 ${date === dateValue(option) ? 'bg-white' : 'bg-white/20'}`} onPress={() => setDate(dateValue(option))} hapticStyle="light">
+              <HapticPressable key={dateValue(option)} className={`rounded-full px-3 py-2 ${date === dateValue(option) ? 'bg-white' : 'bg-[#3A7185]'}`} onPress={() => setDate(dateValue(option))} hapticStyle="light">
                 <Text className={date === dateValue(option) ? 'font-inter-semibold text-nexus-blue' : 'font-inter-semibold text-white'}>{option.toLocaleDateString('es-CO', { weekday: 'short', day: '2-digit' })}</Text>
               </HapticPressable>
             ))}
@@ -414,7 +432,7 @@ export default function CoworkingScreen() {
           <Text className="mt-5 font-inter-semibold text-white">Hora</Text>
           <View className="mt-2 flex-row flex-wrap gap-2">
             {options.slice(0, 9).map((option) => (
-              <HapticPressable key={option} className={`rounded-full px-3 py-2 ${time === option ? 'bg-white' : 'bg-white/20'}`} onPress={() => setTime(option)} hapticStyle="light">
+              <HapticPressable key={option} className={`rounded-full px-3 py-2 ${time === option ? 'bg-white' : 'bg-[#3A7185]'}`} onPress={() => setTime(option)} hapticStyle="light">
                 <Text className={time === option ? 'font-inter-semibold text-nexus-blue' : 'font-inter-semibold text-white'}>{option}</Text>
               </HapticPressable>
             ))}
@@ -422,7 +440,7 @@ export default function CoworkingScreen() {
           <Text className="mt-5 font-inter-semibold text-white">Duración</Text>
           <View className="mt-2 flex-row gap-2">
             {durations.map((option) => (
-              <HapticPressable key={option} className={`rounded-full px-3 py-2 ${duration === option ? 'bg-white' : 'bg-white/20'}`} onPress={() => { setDuration(option); setTime('08:00'); }} hapticStyle="light">
+              <HapticPressable key={option} className={`rounded-full px-3 py-2 ${duration === option ? 'bg-white' : 'bg-[#3A7185]'}`} onPress={() => { setDuration(option); setTime('08:00'); }} hapticStyle="light">
                 <Text className={duration === option ? 'font-inter-semibold text-nexus-blue' : 'font-inter-semibold text-white'}>{option} min</Text>
               </HapticPressable>
             ))}
@@ -437,5 +455,22 @@ export default function CoworkingScreen() {
         </View>
       </Modal>
     </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    elevation: 8,
+    overflow: 'visible',
+    position: 'relative',
+    zIndex: 10,
+  },
+  headerFade: {
+    bottom: -24,
+    height: 24,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+});
