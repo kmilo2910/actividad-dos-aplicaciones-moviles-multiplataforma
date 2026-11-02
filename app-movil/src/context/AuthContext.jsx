@@ -16,9 +16,23 @@ WebBrowser.maybeCompleteAuthSession();
 
 const AuthContext = createContext(null);
 const PENDING_AUTH_KEY = 'nexus.pendingAuthRequest';
+const USER_PROFILE_KEY = 'nexus.userProfile';
+
+function decodeJwt(token) {
+  if (!token) return null;
+
+  try {
+    const encodedPayload = token.split('.')[1];
+    const normalizedPayload = encodedPayload.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(globalThis.atob(normalizedPayload));
+  } catch {
+    return null;
+  }
+}
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const discovery = useAutoDiscovery(`https://${APP_CONFIG.auth0.domain}`);
   const redirectUri = makeRedirectUri({
@@ -34,10 +48,11 @@ export function AuthProvider({ children }) {
       }
     });
 
-    restoreAccessToken()
-      .then((restoredToken) => {
+    Promise.all([restoreAccessToken(), AsyncStorage.getItem(USER_PROFILE_KEY)])
+      .then(([restoredToken, storedProfile]) => {
         console.log('[Auth] Restored session:', Boolean(restoredToken));
         setToken(restoredToken);
+        setUser(storedProfile ? JSON.parse(storedProfile) : decodeJwt(restoredToken));
       })
       .finally(() => setIsLoading(false));
 
@@ -95,8 +110,11 @@ export function AuthProvider({ children }) {
       await AsyncStorage.removeItem(PENDING_AUTH_KEY);
 
       if (!cancelled && tokenResponse.accessToken) {
+        const profile = decodeJwt(tokenResponse.idToken) || decodeJwt(tokenResponse.accessToken);
         await saveAccessToken(tokenResponse.accessToken);
+        await AsyncStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile || {}));
         setToken(tokenResponse.accessToken);
+        setUser(profile);
       }
     }
 
@@ -125,7 +143,7 @@ export function AuthProvider({ children }) {
       extraParams: {
         audience: APP_CONFIG.auth0.audience,
         connection: APP_CONFIG.auth0.connection,
-        prompt: 'login',
+        prompt: 'select_account',
       },
     });
 
@@ -197,13 +215,17 @@ export function AuthProvider({ children }) {
       throw new Error('Auth0 no devolvió un access token.');
     }
 
+    const profile = decodeJwt(tokenResponse.idToken) || decodeJwt(tokenResponse.accessToken);
     await saveAccessToken(tokenResponse.accessToken);
+    await AsyncStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile || {}));
     setToken(tokenResponse.accessToken);
+    setUser(profile);
   }
 
   const value = useMemo(
     () => ({
       token,
+      user,
       isLoading,
       isAuthenticated: Boolean(token),
       isAuth0Ready: Boolean(discovery),
@@ -211,10 +233,12 @@ export function AuthProvider({ children }) {
       signIn,
       async signOut() {
         await clearAccessToken();
+        await AsyncStorage.removeItem(USER_PROFILE_KEY);
         setToken(null);
+        setUser(null);
       },
     }),
-    [discovery, isLoading, redirectUri, token],
+    [discovery, isLoading, redirectUri, token, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
