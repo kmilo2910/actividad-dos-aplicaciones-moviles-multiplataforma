@@ -6,6 +6,10 @@ export function setAccessToken(token) {
   accessToken = token || null;
 }
 
+export function getAccessToken() {
+  return accessToken;
+}
+
 async function request(path, options = {}) {
   const headers = {
     Accept: 'application/json',

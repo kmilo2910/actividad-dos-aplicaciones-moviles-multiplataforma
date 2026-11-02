@@ -17,6 +17,18 @@ export async function listPurchases(email) {
   );
   return r.rows.map(({ data }) => data);
 }
+
+export async function getPurchaseForBook(email, bookId) {
+  const user = await userByEmail(email);
+  if (!user) return null;
+  const r = await getPostgresPool().query(
+    `SELECT data FROM nexus_records
+     WHERE collection='purchases' AND data->>'userId'=$1 AND data->>'bookId'=$2
+     LIMIT 1`,
+    [user.id, bookId]
+  );
+  return r.rows[0]?.data || null;
+}
 export async function createPurchase(profile, bookId) {
   const pool = getPostgresPool();
   const user = await userByEmail(profile.email);

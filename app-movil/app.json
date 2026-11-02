@@ -17,7 +17,8 @@
       "expo-status-bar",
       "expo-router",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-sharing"
     ]
   }
 }

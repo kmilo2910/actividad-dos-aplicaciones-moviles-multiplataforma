@@ -65,6 +65,19 @@ const openapi = {
         },
       },
     },
+    '/books/{id}/download': {
+      get: {
+        tags: ['Books'],
+        summary: 'Descarga un PDF de ejemplo de una publicación adquirida',
+        parameters: [{ $ref: '#/components/parameters/Id' }],
+        security: [{ session: [] }],
+        responses: {
+          200: { description: 'Archivo PDF' },
+          401: { description: 'No autenticado' },
+          403: { description: 'Publicación no adquirida' },
+        },
+      },
+    },
     '/books/bestsellers/top': {
       get: {
         tags: ['Books'],
