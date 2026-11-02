@@ -4,6 +4,12 @@
     "slug": "nexus-campus-digital",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/nexus-icon.png",
+    "splash": {
+      "image": "./assets/nexus-splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F4EE"
+    },
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "nexus",

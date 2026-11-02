@@ -65,7 +65,9 @@ export default function LoadingScreen({ subtitle = 'Preparando tu experiencia', 
         </Animated.View>
       </View>
       <Text style={styles.title}>NEXUS</Text>
-      <Text style={styles.subtitle}>{subtitle}</Text>
+      <Text numberOfLines={2} style={styles.subtitle}>
+        {subtitle}
+      </Text>
       <View style={styles.progressTrack}>
         <Animated.View
           style={[styles.progressBar, { opacity: logoOpacity, width: complete ? '100%' : '58%' }]}
@@ -125,6 +127,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 15,
     marginTop: 8,
+    maxWidth: 300,
+    textAlign: 'center',
   },
   progressTrack: {
     backgroundColor: '#DDEBED',

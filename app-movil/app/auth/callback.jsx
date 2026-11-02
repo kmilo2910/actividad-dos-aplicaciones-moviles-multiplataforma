@@ -9,5 +9,5 @@ export default function AuthCallbackScreen() {
     return <Redirect href="/(tabs)" />;
   }
 
-  return <LoadingScreen />;
+  return <LoadingScreen subtitle="Completando tu inicio de sesión..." />;
 }

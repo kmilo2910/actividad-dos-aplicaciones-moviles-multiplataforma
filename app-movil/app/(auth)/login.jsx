@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import { Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import HapticPressable from '../../src/components/ui/HapticPressable';
@@ -47,8 +47,13 @@ export default function LoginScreen() {
       <View className="flex-1 justify-between px-6 pb-7 pt-16">
         <View>
           <View className="flex-row items-center">
-            <View className="h-14 w-14 items-center justify-center rounded-2xl bg-nexus-blue shadow-sm">
-              <Text className="font-space-semibold text-3xl text-white">N</Text>
+            <View className="h-14 w-14 items-center justify-center rounded-2xl border border-nexus-blue/10 bg-white shadow-sm">
+              <Image
+                accessibilityLabel="Logo de Nexus"
+                className="h-10 w-10"
+                resizeMode="contain"
+                source={require('../../assets/nexus-icon.png')}
+              />
             </View>
             <View className="ml-4">
               <Text className="font-inter-semibold text-xs uppercase tracking-[3px] text-nexus-green">
