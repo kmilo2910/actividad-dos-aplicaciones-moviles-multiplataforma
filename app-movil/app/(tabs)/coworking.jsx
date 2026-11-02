@@ -179,8 +179,13 @@ export default function CoworkingScreen() {
               />
             ) : null}
             <View className="absolute inset-0 bg-[#FCFBF8]/80" />
-            <View className={`h-2 ${colors[index % colors.length]}`} />
-            <View className="relative p-6">
+            <View className="relative px-6 pt-5">
+              <View className="flex-row items-center">
+                <View className={`h-1.5 w-14 rounded-full ${colors[index % colors.length]}`} />
+                <View className="ml-2 h-px flex-1 bg-[#E7E2D9]" />
+              </View>
+            </View>
+            <View className="relative px-6 pb-6 pt-4">
               <Text className="font-space-semibold text-2xl text-nexus-ink">{space.name}</Text>
               <Text className="mt-2 font-inter-semibold text-sm text-nexus-blue">{space.capacity} puestos · Planta {space.floor}</Text>
               {reserved ? (
