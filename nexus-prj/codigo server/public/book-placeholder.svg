@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-labelledby="title">
+  <title>Portada no disponible</title>
+  <rect width="600" height="800" rx="32" fill="#e7eef0"/>
+  <rect x="115" y="120" width="370" height="560" rx="18" fill="#1f4f66"/>
+  <path d="M300 190v370M185 220c45-25 80-25 115 0 35-25 70-25 115 0v280c-45-25-80-25-115 0-35-25-70-25-115 0z" fill="none" stroke="#f4f1eb" stroke-width="18" stroke-linejoin="round"/>
+  <text x="300" y="625" fill="#f4f1eb" font-family="Arial, sans-serif" font-size="30" text-anchor="middle">NEXUS</text>
+</svg>
