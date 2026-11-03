@@ -1,15 +1,43 @@
 import { getPostgresPool } from '@/server/postgres';
 import { randomUUID } from 'node:crypto';
 
-async function userByEmail(email) {
+async function findUser(profile) {
+  const email = typeof profile === 'string' ? profile : profile?.email;
+  const subject = typeof profile === 'string' ? null : profile?.sub || profile?.user_id;
   const r = await getPostgresPool().query(
-    `SELECT data FROM nexus_records WHERE collection='users' AND data->>'email'=$1 LIMIT 1`,
-    [email]
+    `SELECT data FROM nexus_records
+     WHERE collection='users'
+       AND (data->>'email'=$1 OR data->>'googleId'=$2)
+     LIMIT 1`,
+    [email || null, subject || null]
   );
   return r.rows[0]?.data;
 }
-export async function listPurchases(email) {
-  const user = await userByEmail(email);
+
+async function findOrCreateUser(profile) {
+  const existing = await findUser(profile);
+  if (existing) return existing;
+
+  const user = {
+    id: `user-${randomUUID()}`,
+    googleId: profile.sub || profile.user_id || profile.email,
+    name: profile.name || profile.nickname || profile.email || profile.sub,
+    email: profile.email || null,
+    avatar: profile.picture || null,
+    createdAt: new Date().toISOString(),
+  };
+
+  await getPostgresPool().query(
+    `INSERT INTO nexus_records (collection, id, data, created_at, updated_at)
+     VALUES ('users', $1, $2, $3, NOW())`,
+    [user.id, user, user.createdAt]
+  );
+
+  return user;
+}
+
+export async function listPurchases(profile) {
+  const user = await findUser(profile);
   if (!user) return [];
   const r = await getPostgresPool().query(
     `SELECT data FROM nexus_records WHERE collection='purchases' AND data->>'userId'=$1 ORDER BY created_at DESC`,
@@ -18,8 +46,8 @@ export async function listPurchases(email) {
   return r.rows.map(({ data }) => data);
 }
 
-export async function getPurchaseForBook(email, bookId) {
-  const user = await userByEmail(email);
+export async function getPurchaseForBook(profile, bookId) {
+  const user = await findUser(profile);
   if (!user) return null;
   const r = await getPostgresPool().query(
     `SELECT data FROM nexus_records
@@ -31,8 +59,7 @@ export async function getPurchaseForBook(email, bookId) {
 }
 export async function createPurchase(profile, bookId) {
   const pool = getPostgresPool();
-  const user = await userByEmail(profile.email);
-  if (!user) throw new Error('Usuario no encontrado');
+  const user = await findOrCreateUser(profile);
   const bookResult = await pool.query(
     `SELECT data FROM nexus_records WHERE collection='books' AND id=$1`,
     [bookId]

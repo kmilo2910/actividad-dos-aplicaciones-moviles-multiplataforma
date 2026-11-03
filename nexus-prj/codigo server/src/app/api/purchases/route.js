@@ -6,7 +6,7 @@ export async function GET(request) {
   const user = await authenticatedUser(request);
   if (!user?.email && !user?.sub) return apiError('Autenticación requerida', 401, 'AUTH_REQUIRED');
   return apiSuccess(
-    await listPurchases(user.email),
+    await listPurchases(user),
     'Adquisiciones cargadas correctamente'
   );
 }

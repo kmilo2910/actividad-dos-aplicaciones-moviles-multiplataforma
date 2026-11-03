@@ -56,14 +56,14 @@ function createExamplePdf(book, purchase) {
 
 export async function GET(request, { params }) {
   const user = await authenticatedUser(request);
-  if (!user?.email) {
+  if (!user?.email && !user?.sub) {
     return NextResponse.json({ code: 'AUTH_REQUIRED', message: 'Autenticación requerida' }, { status: 401 });
   }
 
   const bookId = params.id;
   const [book, purchase] = await Promise.all([
     getBook(bookId),
-    getPurchaseForBook(user.email, bookId),
+    getPurchaseForBook(user, bookId),
   ]);
 
   if (!book) return NextResponse.json({ code: 'NOT_FOUND', message: 'Publicación no encontrada' }, { status: 404 });
